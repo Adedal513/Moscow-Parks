@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    'rest_framework',
     "rest_framework_gis"
 ]
 
@@ -131,3 +132,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DEFAULT_ADMIN_LAT = 55.7522
+DEFAULT_ADMIN_LON = 37.6156
