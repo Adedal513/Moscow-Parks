@@ -1,12 +1,18 @@
 import React from 'react';
 import {GeoJSON, MapContainer, TileLayer} from "react-leaflet";
 import 'client'
+import DetailCard from './DetailCard';
 
 
 class MapView extends  React.Component {
     state = {
         parks: [],
+        displayDetails: false,
     };
+
+    ShowDetailsCard = (park_id) => {
+        this.setState({displayDetails: true, details_id: park_id})
+    }
 
     componentDidMount() {
         this.loadParksFromServer();
@@ -20,13 +26,28 @@ class MapView extends  React.Component {
     };
 
     render() {
-        return(
-            <div className="leaflet-container">
-                <Map
-                    park_polygons={this.state.parks}
-                />
-            </div>
-        )
+        if (this.state.displayDetails) {
+            let park_details = this.state.parks.find(park => park.id == this.state.details_id)
+            return (
+                <div className="leaflet-container">
+                    <DetailCard detailsData={park_details}/>
+                    <Map
+                        park_polygons={this.state.parks}
+                        onDetailsClick={this.ShowDetailsCard}
+                    />
+                </div> 
+            )
+        } else {
+            return (
+                <div className="leaflet-container">
+                    { this.state.displayDetails ? <DetailCard/> : null }
+                    <Map
+                        park_polygons={this.state.parks}
+                        onDetailsClick={this.ShowDetailsCard}
+                    />
+                </div>
+            )
+        }
     }
 }
 
@@ -41,8 +62,8 @@ class Map extends React.Component {
         const park_pols = this.props.park_polygons.map((polygon) => (
             <ParkPolygon
                 data={polygon.geofence}
-                title={polygon['title']}
-                description={polygon.description}
+                park_id={polygon.id}
+                handleDetailsClick={this.props.onDetailsClick}
             />
         ))
         return(
@@ -70,13 +91,9 @@ class Map extends React.Component {
 
 class ParkPolygon extends React.Component {
     
-    componentDidMount() {
-        let mapInst = this.refs.map.leafletElement;
-    }
-    
     handlePolygonClick = () => {
-        let center = mapInst.getBounds().getCenter();
-        console.log(`Clicked on ${center}`);
+        this.props.handleDetailsClick(this.props.park_id)
+        console.log(`Clicked on polygon!`);
     }
 
     onEachFeature(feature, layer) {
