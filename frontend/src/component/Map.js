@@ -50,7 +50,7 @@ class Map extends React.Component {
                 center={this.state.center}
                 zoom={6}
                 maxZoom={100}
-                //minZoom={10}
+                minZoom={10}
                 attributionControl={true}
                 zoomControl={true}
                 doubleClickZoom={true}
@@ -69,30 +69,36 @@ class Map extends React.Component {
 }
 
 class ParkPolygon extends React.Component {
-  handlePolygonClick = () => {
-      console.log(`Clicked on ${this.props.title}`);
-  }
+    
+    componentDidMount() {
+        let mapInst = this.refs.map.leafletElement;
+    }
+    
+    handlePolygonClick = () => {
+        let center = mapInst.getBounds().getCenter();
+        console.log(`Clicked on ${center}`);
+    }
 
-  onEachFeature(feature, layer) {
-    layer.on({
-      click: this.handlePolygonClick.bind(this)
-    });
-  }
+    onEachFeature(feature, layer) {
+        layer.on({
+            click: this.handlePolygonClick.bind(this)
+        });
+    }
 
-  render() {
-    return(
-        <GeoJSON
-          data={this.props.data}
-          style={{
-            opacity: 0,
-            fillColor: "green",
-            weight: 0.3,
-            fillOpacity: 0.5,
-          }}
-          onEachFeature={this.onEachFeature.bind(this)}
-        />
-    )
-  }
+    render() {
+        return(
+            <GeoJSON
+                data={this.props.data}
+                style={{
+                    opacity: 0,
+                    fillColor: "green",
+                    weight: 0.3,
+                    fillOpacity: 0.5,
+                }}
+                onEachFeature={this.onEachFeature.bind(this)}
+            />
+        )
+    }
 }
 
 export default MapView;
